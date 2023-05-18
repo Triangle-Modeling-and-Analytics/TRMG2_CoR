@@ -219,7 +219,7 @@ Macro "TIA VMT" (Args, Scen_Name)
     mapvars = {"TotalVMT_perser", "HBVMT_perres", "HBWVMT_peremp"}
     for varname in mapvars do
         v = cor.tbl.(varname)
-        n_pct = VectorStatistic(v, "Percentile", {"Percentile": 85}) 
+        n_pct = VectorStatistic(v, "Mean",) 
         n_min =  VectorStatistic(v, "Min",)
         n_max =  VectorStatistic(v, "Max",)
 
@@ -230,7 +230,7 @@ Macro "TIA VMT" (Args, Scen_Name)
         opts.npct = n_pct
         opts.nmin = n_min
         opts.nmax = n_max
-        opts,name = Scen_Name
+        opts.name = Scen_Name
         RunMacro("Create Zone VMT Map", opts)
     end
 
