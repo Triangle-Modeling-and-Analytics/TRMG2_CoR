@@ -212,7 +212,8 @@ Macro "TIA VMT" (Args, Scen_Name)
     vmt_df.write_csv(output_dir + "/TIA_VMT.csv")
 
     // Calculate Min, 85th, and Max for CoR and Create Maps
-    cor = CreateObject("df", "C:\\Work\\CoR_TIA\\TAZ_COR_District\\TAZ_shapefile_CoR.bin")
+    cor_dir = Args.[Base Folder] + "/other/_reportingtool"
+    cor = CreateObject("df", cor_dir + "/TAZ_shapefile_CoR.bin")
     cor.left_join(vmt_df, "TAZ", "TAZ")
     cor.filter("CorporateLimit = 1")
 
