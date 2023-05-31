@@ -92,8 +92,8 @@ menu "TRMG2 Utilities"
     MenuItem "Accessibility" text: "Accessibility Analysis"
         menu "Accessibility Analysis"
 
-    MenuItem "Matrix" text: "Matrix Aggregation"
-        menu "Matrix Aggregation"
+    MenuItem "Matrix" text: "Matrix Aggregation and Deletion"
+        menu "Matrix Aggregation and Deletion"
 
     MenuItem "Comparison" text: "Scenario Comparison Tools"
         menu "Scenario Comparison Tools"
@@ -146,7 +146,7 @@ menu "Accessibility Analysis"
     enditem
 endMenu
 
-menu "Matrix Aggregation"
+menu "Matrix Aggregation and Deletion"
     init do
     enditem
     
@@ -160,6 +160,12 @@ menu "Matrix Aggregation"
         mr = CreateObject("Model.Runtime")
         Args = mr.GetValues()
         mr.RunCode("Open NM Trip Aggregation Tool Dbox", Args)
+    enditem
+
+    MenuItem "Delete Files Tool" text: "Delete Matrix Files" do
+        mr = CreateObject("Model.Runtime")
+        Args = mr.GetValues()
+        mr.RunCode("Open Delete Files Tool Dbox", Args)
     enditem
 endMenu
 
