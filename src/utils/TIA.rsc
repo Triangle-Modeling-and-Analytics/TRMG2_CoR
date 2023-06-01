@@ -307,7 +307,7 @@ Macro "Create Zone VMT Map" (opts)
     numClasses = 2
     cTheme = CreateTheme("ZonalVMT", jnvw+"." + varname, "Manual" , numClasses, {
       {"Values",{
-        {n_min, "True", n_pct, "False"},
+        {n_min, "True", n_threshold, "False"},
         {n_threshold, "True", n_max, "True"}
         }},
       {"Other", "False"}
