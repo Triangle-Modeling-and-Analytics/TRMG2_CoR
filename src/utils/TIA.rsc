@@ -65,7 +65,7 @@ Macro "TIA VMT" (Args, Scen_Name)
     CopyFile(autotrip, out_file)
     out_mtx = CreateObject("Matrix", out_file)
     out_core_names = out_mtx.GetCoreNames()
-    out_mtx.AddCores({"HB_VMT"})
+    out_mtx.AddCores({"HBVMT"})
     out_mtx.DropCores(out_core_names)
 
     // 0. Create the output table (first iteration only)
@@ -87,10 +87,10 @@ Macro "TIA VMT" (Args, Scen_Name)
 
     // 1. Calculate home based VMT per resident
     // 1.1 Loop through TOD to calculate HB VMT
-    field_name = "HB_VMT"
+    field_name = "HBVMT"
     fields_to_add = fields_to_add + {{field_name, "Real", 10, 2,,,, desc}}
     
-    out_core = out_mtx.GetCore("HB_VMT")
+    out_core = out_mtx.GetCore("HBVMT")
     mode = {"sov", "hov2", "hov3"}
     for tod in TOD_list do
         // set input path
@@ -107,17 +107,17 @@ Macro "TIA VMT" (Args, Scen_Name)
 
         out_core := nz(out_core) + nz(trip_cores.("sov")) * nz(skim_sov_core) + nz(trip_cores.("hov2")) * nz(skim_hov_core) +  nz(trip_cores.("hov3")) * nz(skim_hov_core)
     end
-    v_hbvmt = out_mtx.GetVector({"Core": "HB_VMT", Marginal: "Row Sum"})
+    v_hbvmt = out_mtx.GetVector({"Core": "HBVMT", Marginal: "Row Sum"})
     v_hbvmt.rowbased = "true"
     data.(field_name) = nz(v_hbvmt)
 
     // 2. Calculate total VMT per service population
     // 2.1 Calculate IEEI VMT
-    field_name = "IEEI_VMT"
+    field_name = "IEEIVMT"
     fields_to_add = fields_to_add + {{field_name, "Real", 10, 2,,,, desc}}
 
-    out_mtx.AddCores({"IEEI_VMT"})
-    out_core = out_mtx.GetCore("IEEI_VMT")
+    out_mtx.AddCores({"IEEIVMT"})
+    out_core = out_mtx.GetCore("IEEIVMT")
 
     IEEI_dir = dir + "\\output\\external"
     IEEI_trip = IEEI_dir + "\\ie_od_trips.mtx"
@@ -133,16 +133,16 @@ Macro "TIA VMT" (Args, Scen_Name)
         out_core := nz(out_core) + nz(skim_core) * nz(trip_cores.(core_name))
     end
 
-    v_ieeivmt = out_mtx.GetVector({"Core": "IEEI_VMT", Marginal: "Row Sum"})
+    v_ieeivmt = out_mtx.GetVector({"Core": "IEEIVMT", Marginal: "Row Sum"})
     v_ieeivmt.rowbased = "true"
     data.(field_name) = nz(v_ieeivmt)
 
     // 2.2 Calculate University VMT
-    field_name = "University_VMT"
+    field_name = "UniversityVMT"
     fields_to_add = fields_to_add + {{field_name, "Real", 10, 2,,,, desc}}
 
-    out_mtx.AddCores({"University_VMT"})
-    out_core = out_mtx.GetCore("University_VMT")
+    out_mtx.AddCores({"UniversityVMT"})
+    out_core = out_mtx.GetCore("UniversityVMT")
 
     univ_dir = dir + "\\output\\university"
     for tod in TOD_list do
@@ -158,17 +158,17 @@ Macro "TIA VMT" (Args, Scen_Name)
         out_core := nz(out_core) + nz(skim_core) * nz(univ_core)      
     end
 
-    v_univvmt = out_mtx.GetVector({"Core": "University_VMT", Marginal: "Row Sum"})
+    v_univvmt = out_mtx.GetVector({"Core": "UniversityVMT", Marginal: "Row Sum"})
     v_univvmt.rowbased = "true"
     data.(field_name) = nz(v_univvmt)
 
     // 3. Calculate home base work VMT
-    field_name = "HBW_VMT"
+    field_name = "HBWVMT"
     fields_to_add = fields_to_add + {{field_name, "Real", 10, 2,,,, desc}}
 
     RunMacro("Create HBW PA Vehicle Trip Matrices", Args)
-    out_mtx.AddCores({"HBW_VMT"})
-    out_core = out_mtx.GetCore("HBW_VMT")
+    out_mtx.AddCores({"HBWVMT"})
+    out_core = out_mtx.GetCore("HBWVMT")
 
     // 3.2 Loop through TOD to calculate HBW VMT
     mode = {"sov", "hov2", "hov3"}
@@ -188,7 +188,7 @@ Macro "TIA VMT" (Args, Scen_Name)
         out_core := nz(out_core) + nz(trip_cores.("sov")) * nz(skim_sov_core) + nz(trip_cores.("hov2")) * nz(skim_hov_core) +  nz(trip_cores.("hov3")) * nz(skim_hov_core)
     end
 
-    v_hbwvmt = out_mtx.GetVector({"Core": "HBW_VMT", Marginal: "Column Sum"})
+    v_hbwvmt = out_mtx.GetVector({"Core": "HBWVMT", Marginal: "Column Sum"})
     v_hbwvmt.rowbased = "true"
     data.(field_name) = nz(v_hbwvmt)
     
@@ -204,23 +204,33 @@ Macro "TIA VMT" (Args, Scen_Name)
     vmt_df.left_join(se_df, "TAZ", "TAZ")
     vmt_df.mutate("Emp", vmt_df.tbl.("Industry") + vmt_df.tbl.("Retail") + vmt_df.tbl.("Service_RateHigh") + vmt_df.tbl.("Service_RateLow") + vmt_df.tbl.("Office"))
     vmt_df.mutate("Student", vmt_df.tbl.("StudGQ_NCSU") + vmt_df.tbl.("StudGQ_UNC") + vmt_df.tbl.("StudGQ_DUKE") + vmt_df.tbl.("StudGQ_NCCU"))
-    vmt_df.mutate("ServicePopulation", vmt_df.tbl.("HH_POP") + vmt_df.tbl.("Emp") + vmt_df.tbl.("Student"))
-    vmt_df.mutate("TotalVMT_perser", (vmt_df.tbl.("HB_VMT") + vmt_df.tbl.("IEEI_VMT") + vmt_df.tbl.("University_VMT"))/vmt_df.tbl.("ServicePopulation"))
-    vmt_df.mutate("HBVMT_perres", vmt_df.tbl.("HB_VMT")/vmt_df.tbl.("HH_POP"))
-    vmt_df.mutate("HBWVMT_peremp", vmt_df.tbl.("HBW_VMT")/vmt_df.tbl.("Emp"))
-    vmt_df.select({"TAZ", "HB_VMT", "IEEI_VMT", "University_VMT", "HBW_VMT", "HH_POP", "Emp", "Student", "ServicePopulation", "TotalVMT_perser", "HBVMT_perres", "HBWVMT_peremp"})
-    vmt_df.write_csv(output_dir + "/TIA_VMT.csv")
+    vmt_df.mutate("ServicePop", vmt_df.tbl.("HH_POP") + vmt_df.tbl.("Emp") + vmt_df.tbl.("Student"))
+    vmt_df.mutate("TotalVMT", vmt_df.tbl.("HBVMT") + vmt_df.tbl.("IEEIVMT") + vmt_df.tbl.("UniversityVMT"))
+    vmt_df.mutate("TotalVMT_perservicepop", vmt_df.tbl.("TotalVMT")/vmt_df.tbl.("ServicePop"))
+    vmt_df.mutate("HBVMT_perres", vmt_df.tbl.("HBVMT")/vmt_df.tbl.("HH_POP"))
+    vmt_df.mutate("HBWVMT_peremp", vmt_df.tbl.("HBWVMT")/vmt_df.tbl.("Emp"))
+    vmt_df.rename("HH_POP", "Res")
+    vmt_df.select({"TAZ", "HBVMT", "IEEIVMT", "UniversityVMT", "HBWVMT", "Res", "Emp", "Student", "ServicePop", "TotalVMT", "TotalVMT_perservicepop", "HBVMT_perres", "HBWVMT_peremp"})
 
     // Calculate Min, 85th, and Max for CoR and Create Maps
     cor_dir = Args.[Base Folder] + "/other/_reportingtool"
     cor = CreateObject("df", cor_dir + "/TAZ_shapefile_CoR.bin")
     cor.left_join(vmt_df, "TAZ", "TAZ")
+    cor.write_csv(output_dir + "/TIA_VMT.csv")
     cor.filter("CorporateLimit = 1")
 
-    mapvars = {"TotalVMT_perser", "HBVMT_perres", "HBWVMT_peremp"}
+    mapvars = {"TotalVMT_perServicePop", "HBVMT_perRes", "HBWVMT_perEmp"}
     for varname in mapvars do
+        n = StringLength(varname)
+        pos = position(varname, "_")
+        varname_left = Left(varname, pos-1)
+        varname_right = right(varname, n-pos-3)
+        
+        v_left = cor.tbl.(varname_left)
+        v_right = cor.tbl.(varname_right)
         v = cor.tbl.(varname)
-        n_pct = VectorStatistic(v, "Mean",) 
+
+        n_threshold = 0.85 * VectorStatistic(v_left, "Sum",)/VectorStatistic(v_right, "Sum",)
         n_min =  VectorStatistic(v, "Min",)
         n_max =  VectorStatistic(v, "Max",)
 
@@ -228,7 +238,7 @@ Macro "TIA VMT" (Args, Scen_Name)
         opts.output_dir = output_dir
         opts.taz_file = taz_file
         opts.varname = varname
-        opts.npct = n_pct
+        opts.nthreshold = n_threshold
         opts.nmin = n_min
         opts.nmax = n_max
         opts.name = Scen_Name
@@ -281,7 +291,7 @@ Macro "Create Zone VMT Map" (opts)
     output_dir = opts.output_dir 
     taz_file = opts.taz_file
     varname = opts.varname
-    n_pct = opts.npct
+    n_threshold = opts.nthreshold
     n_min = opts.nmin
     n_max = opts.nmax
     scenname = opts.name
@@ -298,7 +308,7 @@ Macro "Create Zone VMT Map" (opts)
     cTheme = CreateTheme("ZonalVMT", jnvw+"." + varname, "Manual" , numClasses, {
       {"Values",{
         {n_min, "True", n_pct, "False"},
-        {n_pct, "True", n_max, "True"}
+        {n_threshold, "True", n_max, "True"}
         }},
       {"Other", "False"}
     }
