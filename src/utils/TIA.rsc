@@ -219,20 +219,28 @@ Macro "TIA VMT" (Args, Scen_Name)
     cor.write_csv(output_dir + "/TIA_VMT.csv")
     cor.filter("CorporateLimit = 1")
 
-    mapvars = {"TotalVMT_perServicePop", "HBVMT_perRes", "HBWVMT_perEmp"}
+    mapvars = {"TotalVMT_perServicePop", "HBVMT_perRes", "HBWVMT_perEmp", "TotalVMT"}
     for varname in mapvars do
-        n = StringLength(varname)
-        pos = position(varname, "_")
-        varname_left = Left(varname, pos-1)
-        varname_right = right(varname, n-pos-3)
+        if varname = "TotalVMT" then do
+            v = cor.tbl.(varname)
+            n_threshold = 0.85 * VectorStatistic(v, "Mean",)
+            n_min =  VectorStatistic(v, "Min",)
+            n_max =  VectorStatistic(v, "Max",)
+        end
+        else do
+            n = StringLength(varname)
+            pos = position(varname, "_")
+            varname_left = Left(varname, pos-1)
+            varname_right = right(varname, n-pos-3)
         
-        v_left = cor.tbl.(varname_left)
-        v_right = cor.tbl.(varname_right)
-        v = cor.tbl.(varname)
+            v_left = cor.tbl.(varname_left)
+            v_right = cor.tbl.(varname_right)
+            v = cor.tbl.(varname)
 
-        n_threshold = 0.85 * VectorStatistic(v_left, "Sum",)/VectorStatistic(v_right, "Sum",)
-        n_min =  VectorStatistic(v, "Min",)
-        n_max =  VectorStatistic(v, "Max",)
+            n_threshold = 0.85 * VectorStatistic(v_left, "Sum",)/VectorStatistic(v_right, "Sum",)
+            n_min =  VectorStatistic(v, "Min",)
+            n_max =  VectorStatistic(v, "Max",)
+        end
 
         opts = null
         opts.output_dir = output_dir
