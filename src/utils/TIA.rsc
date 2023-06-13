@@ -217,7 +217,7 @@ Macro "TIA VMT" (Args, Scen_Name)
     cor = CreateObject("df", cor_dir + "/TAZ_shapefile_CoR.bin")
     cor.left_join(vmt_df, "TAZ", "TAZ")
     cor.write_csv(output_dir + "/TIA_VMT.csv")
-    cor.filter("CorporateLimit = 1")
+    cor.filter("Jurisdicti ='Raleigh City Limits'")
 
     mapvars = {"TotalVMT_perServicePop", "HBVMT_perRes", "HBWVMT_perEmp", "TotalVMT"}
     for varname in mapvars do
