@@ -103,6 +103,9 @@ menu "TRMG2 Utilities"
 
     MenuItem "Performance" text: "Performance Measures"
         menu "Performance Measures"
+
+    MenuItem "TIA" text: "TIA Site Analysis"
+        menu "TIA Site Analysis"
     
 endMenu
 
@@ -223,12 +226,6 @@ menu "Performance Measures"
         mr.RunCode("Open Prepare MOVES Input Dbox", Args)
     enditem
     
-    MenuItem "TIA" text: "TIA VMT Calculate" do
-        mr = CreateObject("Model.Runtime")
-        Args = mr.GetValues()
-        mr.RunCode("Open TIA VMT Dbox", Args)
-    enditem
-    
     MenuItem "Concatenate Files" text: "Concatenate CSV Files" do
         mr = CreateObject("Model.Runtime")
         Args = mr.GetValues()
@@ -236,6 +233,21 @@ menu "Performance Measures"
     enditem
 
 endMenu
+
+menu "TIA Site Analysis"
+    init do
+    enditem
+
+    MenuItem "Zone" text: "Zone VMT Metrics" do
+        mr = CreateObject("Model.Runtime")
+        Args = mr.GetValues()
+        mr.RunCode("Open TIA Zone VMT Dbox", Args)
+    enditem
+
+    MenuItem "Link" text: "Link VMT Metrics"
+        menu "Link VMT Metric"
+endMenu
+
 menu "TRMG2 Calibrators"
     init do
     enditem
@@ -256,6 +268,23 @@ menu "TRMG2 Calibrators"
         mr = CreateObject("Model.Runtime")
         Args = mr.GetValues()
         mr.RunCode("Calibrate HB MC", Args)
+    enditem
+endMenu
+
+menu "Link VMT Metric"
+    init do
+    enditem
+
+    MenuItem "SL" text: "Select Link Analysis" do
+        mr = CreateObject("Model.Runtime")
+        Args = mr.GetValues()
+        mr.RunCode("Open Select Link Dbox", Args)
+    enditem
+
+    MenuItem "LinkVMT" text: "Calculate Link VMT" do
+        mr = CreateObject("Model.Runtime")
+        Args = mr.GetValues()
+        mr.RunCode("Open TIA Link VMT Dbox", Args)
     enditem
 endMenu
 

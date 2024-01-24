@@ -1,9 +1,9 @@
-Macro "Open TIA VMT Dbox" (Args)
-	RunDbox("TIA VMT", Args)
+Macro "Open TIA Zone VMT Dbox" (Args)
+	RunDbox("TIA Zone VMT", Args)
 endmacro
 
-dBox "TIA VMT" (Args) center, center, 60, 10 
-    Title: "TIA VMT" Help: "test" toolbox NoKeyBoard
+dBox "TIA Zone VMT" (Args) center, center, 60, 10 
+    Title: "Zone VMT Metrics" Help: "test" toolbox NoKeyBoard
 
     close do
         return()
@@ -19,7 +19,7 @@ dBox "TIA VMT" (Args) center, center, 60, 10
     enditem
 
     // New Scenario
-    Text 45, 3, 15 Prompt: "Perform analysis for scenario (selected in scenario list):" Variable: Scen_Name
+    Text 45, 3, 15 Prompt: "Run analysis for scenario (selected in the scenario list):" Variable: Scen_Name
 
     // Quit Button
     button 5, 8, 10 Prompt:"Quit" do
@@ -29,7 +29,7 @@ dBox "TIA VMT" (Args) center, center, 60, 10
     // Run Button
     button 18, 8, 20 Prompt:"Generate Results" do 
 
-        if !RunMacro("TIA VMT", Args, Scen_Name) then Throw("Something went wrong")
+        if !RunMacro("TIA Zone VMT", Args, Scen_Name) then Throw("Something went wrong")
  
         ShowMessage("Reports have been created successfully.")
 	return(1)
@@ -41,12 +41,12 @@ dBox "TIA VMT" (Args) center, center, 60, 10
 
     Button 41, 8, 10 Prompt: "Help" do
         ShowMessage(
-        "This tool is used to calculate VMT metrics for TIA projects. "
+        "This tool is used to calculate zone VMT metrics for TIA projects."
      )
     enditem
 enddbox
 
-Macro "TIA VMT" (Args, Scen_Name)
+Macro "TIA Zone VMT" (Args, Scen_Name)
     dir = Args.[Scenario Folder]
     TOD_list = Args.Periods
     taz_file = Args.TAZs
@@ -56,8 +56,9 @@ Macro "TIA VMT" (Args, Scen_Name)
     autotrip_dir = dir + "\\output\\_summaries\\resident_hb"
     reporting_dir = dir + "\\output\\_summaries"
     output_dir = reporting_dir + "\\VMT_TIA"
+    map_dir = output_dir + "\\maps"
     RunMacro("Create Directory", output_dir)
-    
+    RunMacro("Create Directory", map_dir)
     
     // 0. create output matrix
     out_file = output_dir + "\\TIA_VMT.mtx"
@@ -216,7 +217,7 @@ Macro "TIA VMT" (Args, Scen_Name)
     cor_dir = Args.[Base Folder] + "/other/_reportingtool"
     cor = CreateObject("df", cor_dir + "/TAZ_shapefile_CoR.bin")
     cor.left_join(vmt_df, "TAZ", "TAZ")
-    cor.write_csv(output_dir + "/TIA_VMT.csv")
+    cor.write_csv(output_dir + "/Zone_VMT.csv")
     cor.filter("Jurisdicti ='Raleigh City Limits'")
 
     mapvars = {"TotalVMT_perServicePop", "HBVMT_perRes", "HBWVMT_perEmp", "TotalVMT"}
@@ -305,8 +306,8 @@ Macro "Create Zone VMT Map" (opts)
     scenname = opts.name
 
     // Mapping VMT delta on a taz map
-    vw = OpenTable("vw", "CSV", {output_dir + "/TIA_VMT.CSV"})
-    mapFile = output_dir + "/" + varname + ".map"
+    vw = OpenTable("vw", "CSV", {output_dir + "/Zone_VMT.CSV"})
+    mapFile = output_dir + "/maps/" + varname + ".map"
     {map, {tlyr}} = RunMacro("Create Map", {file: taz_file})
     jnvw = JoinViews("jv", tlyr + ".ID", vw + ".TAZ",)
     SetView(jnvw)

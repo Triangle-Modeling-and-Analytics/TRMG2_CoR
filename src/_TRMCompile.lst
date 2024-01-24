@@ -30,6 +30,7 @@ utils/TransitProjectManagement.rsc
 utils/LinkDiffTool.rsc
 utils/ScenarioComparison.rsc
 utils/FixedODAssignment.rsc
+utils/FixedODAssignment_forLinkVMT.rsc
 utils/Calibrators.rsc
 utils/merge_tool.rsc
 utils/se_update.rsc
@@ -42,5 +43,6 @@ utils/trip_aggregation_nm.rsc
 utils/MOVES.rsc
 utils/ZonalVMTCalculation.rsc
 utils/concatenate.rsc
-utils/TIA.rsc
+utils/TIA_zoneVMT.rsc
+utils/TIA_linkVMT.rsc
 utils/deletefiles.rsc
