@@ -244,7 +244,7 @@ menu "TIA Site Analysis"
         mr.RunCode("Open TIA Zone VMT Dbox", Args)
     enditem
 
-    MenuItem "Link" text: "Link VMT Metrics"
+    MenuItem "Link" text: "Link VMT Metric"
         menu "Link VMT Metric"
 endMenu
 

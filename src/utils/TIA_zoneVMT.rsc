@@ -187,6 +187,8 @@ Macro "TIA Zone VMT" (Args, Scen_Name)
         skim_hov_core = skim_hov_mtx.GetCore("Length (Skim)")
 
         out_core := nz(out_core) + nz(trip_cores.("sov")) * nz(skim_sov_core) + nz(trip_cores.("hov2")) * nz(skim_hov_core) +  nz(trip_cores.("hov3")) * nz(skim_hov_core)
+        trip_mtx = null
+        trip_cores = null
     end
 
     v_hbwvmt = out_mtx.GetVector({"Core": "HBWVMT", Marginal: "Column Sum"})
@@ -213,7 +215,7 @@ Macro "TIA Zone VMT" (Args, Scen_Name)
     vmt_df.rename("HH_POP", "Res")
     vmt_df.select({"TAZ", "HBVMT", "IEEIVMT", "UniversityVMT", "HBWVMT", "Res", "Emp", "Student", "ServicePop", "TotalVMT", "TotalVMT_perservicepop", "HBVMT_perres", "HBWVMT_peremp"})
 
-    // Calculate Min, 85th, and Max for CoR and Create Maps
+    // Calculate Min, 85% of average, and Max for CoR and Create Maps
     cor_dir = Args.[Base Folder] + "/other/_reportingtool"
     cor = CreateObject("df", cor_dir + "/TAZ_shapefile_CoR.bin")
     cor.left_join(vmt_df, "TAZ", "TAZ")
@@ -254,6 +256,14 @@ Macro "TIA Zone VMT" (Args, Scen_Name)
         RunMacro("Create Zone VMT Map", opts)
     end
 
+    // Delete interim files
+    DeleteFile(vmt_binfile)
+    DeleteFile(Substitute(vmt_binfile, ".bin", ".dcb",))
+    for tod in TOD_list do
+        // set input path
+        trip_file = output_dir + "\\pa_veh_trips_W_HB_W_All_" + tod + ".mtx"
+        DeleteFile(trip_file)
+    end
     Return(1)    
 endmacro
 

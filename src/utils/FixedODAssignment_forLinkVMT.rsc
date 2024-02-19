@@ -16,7 +16,7 @@ dBox "SelectLink" (Args) center, center, 50, 8 Title: "Select Link Analysis" Hel
     return()
   enditem
 
-  Text 15, 1, 15 Prompt: "New Scenario:" Variable: "(current scenario)"
+  Text 15, 1, 15 Prompt: "Selected Scenario:" Variable: "(current scenario)"
 
   Edit Text same, after, 15 Prompt: "Select Link Query:" Variable: sl_query
   Button after, same, 5, 1 Prompt: "..." do
@@ -41,11 +41,11 @@ dBox "SelectLink" (Args) center, center, 50, 8 Title: "Select Link Analysis" Hel
   enditem
   Button 28, same Prompt: "Help" do
     ShowMessage(
-      "This tool calculate link VMT going to the study zone(s)." +
-      " First, build the link query using study zone(s) centroid " +
-      " connectors. Then Choose the case study run as completed" +
-      " scenario and copy the network to the new scenario to run" +
-      " this tool."
+      "This tool calculates link VMT going to the study zone(s)." +
+      " Before running this tool, build the link query using the" +
+      " incoming direction of centroid connectors of the study zone(s)."+
+      "Then select the completed project scenario using dropdown menu." 
+
     )
   enditem
 enddbox
